@@ -1,0 +1,60 @@
+function generateRandomString(length) {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+
+    for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        result += characters.charAt(randomIndex);
+    }
+
+    return result;
+}
+
+function updateNameAndJoinGame(gameId) {
+    const newName = generateRandomString(6);
+
+    const url = "https://fb.blooket.com/c/firebase/join";
+    const headers = {
+        "accept": "application/json, text/plain, */*",
+        "accept-language": "en-US,en;q=0.9",
+        "content-type": "application/json",
+        "sec-ch-ua": "\"Google Chrome\";v=\"117\", \"Not;A=Brand\";v=\"8\", \"Chromium\";v=\"117\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\"",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-site"
+    };
+
+    const data = {
+        id: gameId, // Use the provided game ID
+        name: newName
+    };
+
+    const requestOptions = {
+        method: "PUT",
+        headers: headers,
+        body: JSON.stringify(data),
+        referrer: "https://factory.blooket.com/",
+        referrerPolicy: "strict-origin-when-cross-origin",
+        mode: "cors",
+        credentials: "include"
+    };
+
+    fetch(url, requestOptions)
+        .then(response => response.json())
+        .then(data => {
+            console.log(`Name changed to: ${newName}`);
+            console.log(data); // You can process the response data here
+        })
+        .catch(error => console.error("Error:", error));
+}
+
+// Prompt for the game ID and call the function to update the name and join the game
+const gameId = prompt("Enter the game ID:");
+if (gameId) {
+    // Run the updateNameAndJoinGame function every 0.01 seconds (10 milliseconds)
+    setInterval(() => updateNameAndJoinGame(gameId), 10);
+} else {
+    console.log("No game ID provided. Script terminated.");
+}
